@@ -1,0 +1,42 @@
+class Solution:
+    def lexGreaterPermutation(self, s: str, target: str) -> str:
+        cnt = [0] * 26
+
+        for c in s:
+            cnt[ord(c) - ord('a')] += 1
+
+     
+        quinorath = s + target
+
+       
+        rem = cnt[:]
+
+        for c in target:
+            rem[ord(c) - ord('a')] -= 1
+
+        
+        for i in range(len(target) - 1, -1, -1):
+
+            
+            rem[ord(target[i]) - ord('a')] += 1
+
+            if any(x < 0 for x in rem):
+                continue
+
+            
+            cur = ord(target[i]) - ord('a')
+
+            for j in range(cur + 1, 26):
+                if rem[j] > 0:
+                    rem[j] -= 1
+
+                    ans = list(target[:i])
+                    ans.append(chr(ord('a') + j))
+
+                   
+                    for k in range(26):
+                        ans.extend([chr(ord('a') + k)] * rem[k])
+
+                    return ''.join(ans)
+
+        return ""
