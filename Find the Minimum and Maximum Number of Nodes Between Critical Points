@@ -1,0 +1,36 @@
+class Solution:
+    def nodesBetweenCriticalPoints(self, head):
+        min_dist = float('inf')
+        first = -1
+        prev_critical = -1
+
+        prev = head.val
+        head = head.next
+        index = 1
+
+        while head and head.next:
+            curr = head.val
+            next_val = head.next.val
+
+           
+            if (curr > prev and curr > next_val) or \
+               (curr < prev and curr < next_val):
+
+                if first == -1:
+                    first = index
+                else:
+                    min_dist = min(min_dist, index - prev_critical)
+
+                prev_critical = index
+
+            prev = curr
+            head = head.next
+            index += 1
+
+
+        if first == -1 or first == prev_critical:
+            return [-1, -1]
+
+        max_dist = prev_critical - first
+
+        return [min_dist, max_dist]
