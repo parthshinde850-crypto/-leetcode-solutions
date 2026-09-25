@@ -1,0 +1,31 @@
+class Solution:
+    def braceExpansionII(self, expression: str):
+        ans = set()
+
+        def dfs(s):
+            # No braces left
+            if '{' not in s:
+                ans.add(s)
+                return
+
+           
+            j = s.find('}')
+
+      
+            i = s.rfind('{', 0, j)
+
+       
+            left = s[:i]
+            right = s[j + 1:]
+            inside = s[i + 1:j]
+
+          
+            choices = inside.split(',')
+
+        
+            for choice in choices:
+                dfs(left + choice + right)
+
+        dfs(expression)
+
+        return sorted(ans)
