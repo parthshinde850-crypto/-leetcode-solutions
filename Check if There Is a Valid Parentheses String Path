@@ -1,0 +1,50 @@
+class Solution:
+    def hasValidPath(self, grid):
+        m = len(grid)
+        n = len(grid[0])
+
+       
+        if (m + n - 1) % 2 != 0:
+            return False
+
+        memo = {}
+
+        def solve(i, j, balance):
+
+            
+            if balance < 0:
+                return False
+
+           
+            if grid[i][j] == '(':
+                balance += 1
+            else:
+                balance -= 1
+
+           
+            if balance < 0:
+                return False
+
+          
+            if i == m - 1 and j == n - 1:
+                return balance == 0
+
+           
+            if (i, j, balance) in memo:
+                return memo[(i, j, balance)]
+
+           
+            down = False
+            if i + 1 < m:
+                down = solve(i + 1, j, balance)
+
+         
+            right = False
+            if j + 1 < n:
+                right = solve(i, j + 1, balance)
+
+            memo[(i, j, balance)] = down or right
+
+            return memo[(i, j, balance)]
+
+        return solve(0, 0, 0)
