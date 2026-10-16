@@ -1,0 +1,47 @@
+class Solution:
+    def sumCounts(self, nums: list[int]) -> int:
+        MOD = 10**9 + 7
+        n = len(nums)
+        
+        # Segment tree nodes store: sum of counts (s), sum of squares of counts (ss), and lazy tag (lz)
+        s = [0] * (4 * n)
+        ss = [0] * (4 * n)
+        lz = [0] * (4 * n)
+        
+        def apply(node, l, r, val):
+            # If count increases by val, sum of squares increases by: 2 * val * s + val^2 * (r - l + 1)
+            ss[node] = (ss[node] + 2 * val * s[node] + val * val * (r - l + 1)) % MOD
+            s[node] = (s[node] + val * (r - l + 1)) % MOD
+            lz[node] = (lz[node] + val) % MOD
+
+        def push(node, l, r):
+            if lz[node] != 0:
+                mid = (l + r) // 2
+                apply(2 * node, l, mid, lz[node])
+                apply(2 * node + 1, mid + 1, r, lz[node])
+                lz[node] = 0
+
+        def update(node, l, r, ql, qr, val):
+            if ql <= l and r <= qr:
+                apply(node, l, r, val)
+                return
+            push(node, l, r)
+            mid = (l + r) // 2
+            if ql <= mid:
+                update(2 * node, l, mid, ql, qr, val)
+            if qr > mid:
+                update(2 * node + 1, mid + 1, r, ql, qr, val)
+            s[node] = (s[2 * node] + s[2 * node + 1]) % MOD
+            ss[node] = (ss[2 * node] + ss[2 * node + 1]) % MOD
+
+        last_seen = {}
+        ans = 0
+        total_sum_squares = 0
+
+        for r in range(n):
+            l = last_seen.get(nums[r], -1) + 1
+            update(1, 0, n - 1, l, r, 1)
+            last_seen[nums[r]] = r
+            ans = (ans + ss[1]) % MOD
+
+        return ans
