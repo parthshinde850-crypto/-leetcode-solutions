@@ -1,0 +1,31 @@
+class Solution:
+    def sortableIntegers(self, nums: List[int]) -> int:
+        n = len(nums)
+        nd = [n] * (n + 1)
+        for i in range(n - 2, -1, -1):
+            nd[i] = i if nums[i] > nums[i + 1] else nd[i + 1]
+        total = 0
+        for k in range(1, n + 1):
+            if n % k:
+                continue
+            ok = True
+            prev = 0
+            for s in range(0, n, k):
+                e = s + k - 1
+                p = nd[s]
+                if p > e - 1:
+                    lo = nums[s]
+                    hi = nums[e]
+                else:
+                    if nd[p + 1] <= e - 1 or nums[e] > nums[s]:
+                        ok = False
+                        break
+                    lo = nums[p + 1]
+                    hi = nums[p]
+                if lo < prev:
+                    ok = False
+                    break
+                prev = hi
+            if ok:
+                total += k
+        return total
